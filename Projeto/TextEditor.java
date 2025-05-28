@@ -2,7 +2,6 @@ package Projeto;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 public class TextEditor extends JFrame {
@@ -12,6 +11,7 @@ public class TextEditor extends JFrame {
     public TextEditor() {
         text = new JTextArea();
         selectfile = new JFileChooser();
+        selectfile.setCurrentDirectory(new File("."));
 
         this.add(new JScrollPane(text), BorderLayout.CENTER);
 
@@ -39,8 +39,9 @@ public class TextEditor extends JFrame {
         this.setJMenuBar(bar);
 
 
-        newarq.addActionListener(e -> text.setText(""));
+        newarq.addActionListener(e -> text.setText(" "));
         openarq.addActionListener(e -> OpenNewFile());
+        savearq.addActionListener(e -> SaveFile());
         exit.addActionListener(e -> System.exit(0));
     }
 
@@ -54,11 +55,19 @@ public class TextEditor extends JFrame {
                 JOptionPane.showMessageDialog(this, "Não foi possível abrir o arquivo: " + ex.getMessage());
             }
         }
-    }
+    } 
 
     private void SaveFile() {
-        
-    }
+        int result = selectfile.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION){
+            File arq = selectfile.getSelectedFile();
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(arq))) {
+                text.write(writer);
+        } catch ( IOException ex) {
+            JOptionPane.showMessageDialog(this, "Não foi possível salvar o arquivo: " + ex.getMessage());    
+            }
+        }
+    } 
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
